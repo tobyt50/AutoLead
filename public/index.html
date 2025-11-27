@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoLead Mission Control</title>
+    <style>
+        body {
+            font-family: -apple-system, system-ui, sans-serif;
+            padding: 20px;
+            background: #f4f4f9;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            color: #333;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        
+        th,
+        td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        th {
+            background-color: #007bff;
+            color: white;
+        }
+        
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+        
+        .badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.85em;
+            font-weight: bold;
+        }
+        
+        .badge-new {
+            background: #e2e3e5;
+            color: #383d41;
+        }
+        
+        .badge-contacted {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        button {
+            padding: 6px 12px;
+            cursor: pointer;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+        }
+        
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        
+        button.call-btn {
+            background: #28a745;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        a.phone-link {
+            color: white;
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>🚀 AutoLead Mission Control</h1>
+        <p>Found businesses without websites.</p>
+        <div id="stats">Loading...</div>
+
+        <table id="leadsTable">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Address</th>
+                    <th>Phone</th>
+                    <th>Rating</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+    <script>
+        async function loadLeads() {
+            const res = await fetch('/api/leads');
+            const leads = await res.json();
+
+            const tbody = document.querySelector('#leadsTable tbody');
+            tbody.innerHTML = '';
+
+            document.getElementById('stats').innerText = `Total Leads: ${leads.length}`;
+
+            leads.forEach(lead => {
+                        const tr = document.createElement('tr');
+                        const isContacted = lead.status === 'CONTACTED';
+
+                        tr.innerHTML = `
+                    <td><strong>${lead.name}</strong><br><small>${lead.category || ''}</small></td>
+                    <td>${lead.address || 'N/A'}</td>
+                    <td>${lead.phone || 'N/A'}</td>
+                    <td>⭐ ${lead.rating || '-'} (${lead.user_ratings_total || 0})</td>
+                    <td><span class="badge badge-${lead.status.toLowerCase()}">${lead.status}</span></td>
+                    <td>
+                        ${lead.phone ? `<button class="call-btn"><a href="tel:${lead.phone}" class="phone-link">📞 Call</a></button>` : ''}
+                        <button onclick="markContacted(${lead.id})" ${isContacted ? 'disabled' : ''}>
+                            ${isContacted ? 'Contacted' : '✉️ Mark Contacted'}
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        async function markContacted(id) {
+            if(!confirm('Mark this lead as contacted?')) return;
+            
+            const btn = event.target;
+            btn.innerText = 'Processing...';
+            
+            await fetch(`/api/leads/${id}/email`, { method: 'POST' });
+            loadLeads(); // Refresh
+        }
+
+        loadLeads();
+    </script>
+</body>
+
+</html>
