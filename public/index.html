@@ -114,7 +114,8 @@
 
     <script>
         async function loadLeads() {
-            const res = await fetch('/api/leads');
+            const API_URL = 'https://autolead.onrender.com';
+            const res = await fetch(`${API_URL}/api/leads`);
             const leads = await res.json();
 
             const tbody = document.querySelector('#leadsTable tbody');
