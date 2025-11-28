@@ -5,156 +5,316 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AutoLead Mission Control</title>
+    <meta name="theme-color" content="#0056d2">
     <style>
-        body {
-            font-family: -apple-system, system-ui, sans-serif;
-            padding: 20px;
-            background: #f4f4f9;
+         :root {
+            --primary: #0056d2;
+            --gray: #666;
+            --border: #eef2f7;
         }
         
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f9f9fb;
+            color: #222;
+            line-height: 1.4;
+            font-size: 14px;
+        }
+        
+        header {
+            text-align: center;
+            padding: 20px 16px 16px;
         }
         
         h1 {
-            color: #333;
+            font-size: 1.65rem;
+            font-weight: 700;
+            margin-bottom: 4px;
         }
         
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
+        p {
+            font-size: 0.92rem;
+            color: #555;
         }
         
-        th,
-        td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-        
-        th {
-            background-color: #007bff;
-            color: white;
-        }
-        
-        tr:hover {
-            background-color: #f1f1f1;
+        #stats {
+            text-align: center;
+            font-weight: 600;
+            color: var(--primary);
+            margin: 16px 12px;
+            font-size: 1rem;
+            padding: 10px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
         }
         
         .badge {
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 0.85em;
-            font-weight: bold;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
         }
         
         .badge-new {
             background: #e2e3e5;
-            color: #383d41;
+            color: #333;
         }
         
         .badge-contacted {
-            background: #d4edda;
-            color: #155724;
+            background: #d1edda;
+            color: #0c5c2c;
         }
         
-        button {
-            padding: 6px 12px;
-            cursor: pointer;
-            background: #007bff;
-            color: white;
+        .btn {
+            padding: 7px 13px;
             border: none;
-            border-radius: 4px;
-        }
-        
-        button:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-        }
-        
-        button.call-btn {
-            background: #28a745;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.83rem;
+            cursor: pointer;
             text-decoration: none;
             display: inline-block;
+            min-width: 76px;
+            text-align: center;
+            transition: background 0.2s;
         }
         
-        a.phone-link {
+        .btn-call {
+            background: #e3f2fd;
+            color: #1565c0;
+        }
+        
+        .btn-call:hover {
+            background: #bbdefb;
+        }
+        
+        .btn-action {
+            background: var(--primary);
             color: white;
-            text-decoration: none;
+        }
+        
+        .btn-action:hover {
+            background: #0041a8;
+        }
+        
+        .btn-action:disabled {
+            background: #999;
+            cursor: not-allowed;
+        }
+        /* ====================== DESKTOP (unchanged – you love it) ====================== */
+        
+        @media (min-width: 769px) {
+            body {
+                padding: 20px;
+            }
+            #leadsTable {
+                width: 100%;
+                border-collapse: separate;
+                border-spacing: 0 10px;
+                font-size: 0.94rem;
+            }
+            th {
+                background: var(--primary);
+                color: white;
+                padding: 14px 12px;
+                text-align: left;
+                font-weight: 600;
+                font-size: 0.8rem;
+                text-transform: uppercase;
+                letter-spacing: 0.6px;
+            }
+            td {
+                background: white;
+                padding: 16px 12px;
+                vertical-align: top;
+                border-top: 1px solid var(--border);
+                border-bottom: 1px solid var(--border);
+            }
+            tr td:first-child {
+                border-left: 1px solid var(--border);
+                border-radius: 10px 0 0 10px;
+            }
+            tr td:last-child {
+                border-right: 1px solid var(--border);
+                border-radius: 0 10px 10px 0;
+            }
+            .name-col strong {
+                display: block;
+                font-size: 1.05rem;
+                font-weight: 700;
+                color: #1a1a1a;
+            }
+            .name-col small {
+                display: block;
+                color: var(--gray);
+                font-size: 0.86rem;
+                margin-top: 4px;
+            }
+            .action-cell {
+                display: flex;
+                gap: 10px;
+                flex-wrap: wrap;
+                align-items: center;
+            }
+        }
+        /* ====================== MOBILE – NOW IDENTICAL TO DESKTOP STYLE ====================== */
+        
+        @media (max-width: 768px) {
+            body {
+                padding: 0;
+            }
+            thead {
+                display: none;
+            }
+            tbody tr {
+                display: block;
+                background: white;
+                margin: 12px 10px;
+                border-radius: 10px;
+                overflow: hidden;
+                box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+                border: 1px solid var(--border);
+            }
+            td {
+                display: block;
+                padding: 11px 16px;
+                border-bottom: 1px solid #f5f8fa;
+            }
+            td:last-child {
+                border-bottom: none;
+            }
+            /* Name exactly like desktop */
+            td[data-label="Name"] {
+                padding: 16px 16px 12px;
+                border-bottom: 2px solid var(--primary) !important;
+            }
+            td[data-label="Name"] strong {
+                display: block;
+                font-size: 1.18rem;
+                font-weight: 700;
+                color: #1a1a1a;
+            }
+            td[data-label="Name"] small {
+                display: block;
+                color: var(--gray);
+                font-size: 0.88rem;
+                margin-top: 4px;
+            }
+            /* All other fields – clean label:value */
+            td:not([data-label="Name"]):not([data-label="Action"]) {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                font-size: 0.95rem;
+            }
+            td:not([data-label="Name"]):not([data-label="Action"])::before {
+                content: attr(data-label) ":";
+                font-weight: 600;
+                color: #444;
+                margin-right: 8px;
+            }
+            /* Action row – same as desktop */
+            td[data-label="Action"] {
+                padding: 16px;
+                background: #fafafa;
+                display: flex;
+                gap: 12px;
+                flex-wrap: wrap;
+            }
+            td[data-label="Action"] .btn {
+                flex: 1;
+                padding: 12px;
+                font-size: 0.92rem;
+            }
         }
     </style>
 </head>
 
 <body>
-    <div class="container">
-        <h1>🚀 AutoLead Mission Control</h1>
-        <p>Found businesses without websites.</p>
-        <div id="stats">Loading...</div>
 
-        <table id="leadsTable">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Address</th>
-                    <th>Phone</th>
-                    <th>Rating</th>
-                    <th>Status</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
-    </div>
+    <header>
+        <h1>AutoLead Mission Control</h1>
+        <p>Businesses without websites – ready to contact</p>
+    </header>
+
+    <div id="stats">Loading leads...</div>
+
+    <table id="leadsTable">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Address</th>
+                <th>Phone</th>
+                <th>Rating</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
 
     <script>
         async function loadLeads() {
             const API_URL = 'https://autolead.onrender.com';
-            const res = await fetch(`${API_URL}/api/leads`);
-            const leads = await res.json();
+            try {
+                const res = await fetch(`${API_URL}/api/leads`);
+                const leads = await res.json();
 
-            const tbody = document.querySelector('#leadsTable tbody');
-            tbody.innerHTML = '';
+                const tbody = document.querySelector('#leadsTable tbody');
+                tbody.innerHTML = '';
+                document.getElementById('stats').textContent = `Total Leads: ${leads.length} · Ready to Convert`;
 
-            document.getElementById('stats').innerText = `Total Leads: ${leads.length}`;
+                leads.forEach(lead => {
+                            const contacted = lead.status === 'CONTACTED';
+                            const tr = document.createElement('tr');
 
-            leads.forEach(lead => {
-                        const tr = document.createElement('tr');
-                        const isContacted = lead.status === 'CONTACTED';
-
-                        tr.innerHTML = `
-                    <td><strong>${lead.name}</strong><br><small>${lead.category || ''}</small></td>
-                    <td>${lead.address || 'N/A'}</td>
-                    <td>${lead.phone || 'N/A'}</td>
-                    <td>⭐ ${lead.rating || '-'} (${lead.user_ratings_total || 0})</td>
-                    <td><span class="badge badge-${lead.status.toLowerCase()}">${lead.status}</span></td>
-                    <td>
-                        ${lead.phone ? `<button class="call-btn"><a href="tel:${lead.phone}" class="phone-link">📞 Call</a></button>` : ''}
-                        <button onclick="markContacted(${lead.id})" ${isContacted ? 'disabled' : ''}>
-                            ${isContacted ? 'Contacted' : '✉️ Mark Contacted'}
-                        </button>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
+                            tr.innerHTML = `
+                        <td data-label="Name" class="name-col">
+                            <strong>${lead.name || '—'}</strong>
+                            ${lead.category ? `<small>${lead.category}</small>` : ''}
+                        </td>
+                        <td data-label="Address">${lead.address || '—'}</td>
+                        <td data-label="Phone">${lead.phone || '—'}</td>
+                        <td data-label="Rating">⭐ ${lead.rating || '-'} (${lead.user_ratings_total || 0})</td>
+                        <td data-label="Status"><span class="badge badge-${lead.status.toLowerCase()}">${lead.status}</span></td>
+                        <td data-label="Action" class="action-cell">
+                            ${lead.phone ? `<a href="tel:${lead.phone}" class="btn btn-call">Call</a>` : ''}
+                            <button class="btn btn-action" onclick="markContacted(${lead.id}, this)" ${contacted ? 'disabled' : ''}>
+                                ${contacted ? 'Contacted' : 'Mark Contacted'}
+                            </button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            } catch (e) {
+                document.getElementById('stats').textContent = 'Failed to load leads';
+            }
         }
 
-        async function markContacted(id) {
-            if(!confirm('Mark this lead as contacted?')) return;
-            
-            const btn = event.target;
-            btn.innerText = 'Processing...';
-            
-            await fetch(`/api/leads/${id}/email`, { method: 'POST' });
-            loadLeads(); // Refresh
+        async function markContacted(id, btn) {
+            if (!confirm('Mark as contacted?')) return;
+            btn.textContent = 'Sending...';
+            btn.disabled = true;
+            try {
+                await fetch(`/api/leads/${id}/email`, { method: 'POST' });
+                loadLeads();
+            } catch (e) {
+                alert('Error – try again');
+                btn.textContent = 'Mark Contacted';
+                btn.disabled = false;
+            }
         }
 
         loadLeads();
+        setInterval(loadLeads, 30000);
     </script>
 </body>
 
